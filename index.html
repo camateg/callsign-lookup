@@ -1,0 +1,52 @@
+<!doctype html>
+<html lang="en">
+<head>
+<title>Callsign Lookup</title>
+
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+
+<style>
+  #main { padding-top: 20px; text-align: center; } 
+  #map { height: 400px; width: 400px; }
+  #go { margin-bottom: 20px; }
+  #address { margin-bottom: 20px; }
+
+</style>
+
+<script>
+  $(document).ready(function() {
+    $('#go').on('click', function(e) {
+      e.preventDefault();
+      var call = $('#callsign').val();
+
+      $.getJSON('https://callook.info/' + call + '/json?callback=?', function(data) {
+        var lat = data.location.latitude;
+        var lng = data.location.longitude;
+
+        var map_url = 'https://maps.googleapis.com/maps/api/staticmap?center=' + lat + ',' + lng + '&zoom=14&size=400x400&markers=color:red%7Clabel:X%7C' + lat + ',' + lng + '&key=AIzaSyDV43GvBi-ywRxmmt2vVjvr4LUFcDzLGEs';
+
+        $('#map').css("background-image", "url(" + map_url + ")");
+      
+        $('#name').html(data.name);
+        $('#curClass').html(data.current.operClass);
+        $('#address').html(data.address.line1 + '<br/ >' + data.address.line2);
+      });
+    });
+  });
+</script>
+</head>
+<body>
+<div id="main" class="container-fluid">
+  <input type="text" class="form-control" placeholder="enter a callsign" id="callsign"></input>
+  <br />
+  <input type="button" id="go" class="btn btn-primary" value="go"></input>
+  <div id="name"></div>
+  <div id="curClass"></div>
+  <div id="address"></div>
+  <div id="map"></div>
+</div>
+</body>
